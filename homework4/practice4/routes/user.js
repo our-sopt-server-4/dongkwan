@@ -6,6 +6,7 @@ let util = require('../modules/util');
 let statusCode = require('../modules/statusCode');
 let responseMessage = require('../modules/responseMessage');
 let encryption = require('../modules/encryption');
+let jwt = require('../modules/jwt');
 
 
 /*
@@ -97,15 +98,16 @@ router.post('/signin', async(req, res) => {
   //   .send(util.fail(statusCode.BAD_REQUEST,responseMessage.MISS_MATCH_PW))
   //   }
   // }
-
-const result = await User.signin(id);
+ // _는 받기는 하는데 사용하진 않는다.
+const result = await User.getUserById(id);
+const {token, _} = await jwt.sign(result[0]);
 const hashed = await encryption.encrypt(password,result[0].salt)
 console.log(result)
 
   // 성공 - login success와 함께 user Id 반환
-  if( hashed == result[0].password){
+  if(hashed == result[0].password){
     res.status(statusCode.OK)
-    .send(util.success(statusCode.OK,responseMessage.LOGIN_SUCCESS,{userId: id}))
+    .send(util.success(statusCode.OK,responseMessage.LOGIN_SUCCESS,{accessToken : token}))
   }
   else{
         res.status(statusCode.BAD_REQUEST)
@@ -115,43 +117,43 @@ console.log(result)
 });
 
 
-router.get('/profile/:id', async(req,res)=> {
-  // request params 에서 데이터 가져오기
-  const id = req.query.id;
+// router.get('/profile/:id', async(req,res)=> {
+//   // request params 에서 데이터 가져오기
+//   const id = req.query.id;
 
 
-  // 존재하는 아이디인지 확인 - 없다면 No user 반환
-  const user = UserModel.filter(user => user.id === id);
-  if(user.length == 0 ){  
-    res.status(statusCode.BAD_REQUEST)
-    .send(util.fail(statusCode.BAD_REQUEST,responseMessage.NO_USER));
-    return
-  }
+//   // 존재하는 아이디인지 확인 - 없다면 No user 반환
+//   const user = UserModel.filter(user => user.id === id);
+//   if(user.length == 0 ){  
+//     res.status(statusCode.BAD_REQUEST)
+//     .send(util.fail(statusCode.BAD_REQUEST,responseMessage.NO_USER));
+//     return
+//   }
 
   
-  // 성공 - login success와 함께 user Id 반환
-  res.status(statusCode.OK)
-  .send(util.success(statusCode.OK,responseMessage.READ_PROFILE_SUCCESS,{user}))
+//   // 성공 - login success와 함께 user Id 반환
+//   res.status(statusCode.OK)
+//   .send(util.success(statusCode.OK,responseMessage.READ_PROFILE_SUCCESS,{user}))
 
-})
+// })
 
-module.exports = {
-  success: (status, message, data) => {
-      return {
-          status: status,
-          success: true,
-          message: message,
-          data: data
-      }
-  },
-  fail: (status, message) => {
-      return {
-          status: status,
-          success: false,
-          message: message
-      }
-  },
-};
+// module.exports = {
+//   success: (status, message, data) => {
+//       return {
+//           status: status,
+//           success: true,
+//           message: message,
+//           data: data
+//       }
+//   },
+//   fail: (status, message) => {
+//       return {
+//           status: status,
+//           success: false,
+//           message: message
+//       }
+//   },
+// };
 
 module.exports = router;
 
