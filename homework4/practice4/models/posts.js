@@ -26,7 +26,7 @@ const post = {
     },
 
     getPostbyId : async (id) => {
-    const query = `SELECT * FROM ${table} WHERE postIdx = "${id}"`;
+    const query = `SELECT * FROM ${table} WHERE postIdx = "${id}"`; // postIdx의 컬럼이 0인것의 정보를 모두 가져온다.
     try {
         const result = await pool.queryParam(query);
         return result;
