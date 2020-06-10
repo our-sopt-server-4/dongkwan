@@ -48,15 +48,25 @@ router.get('/', async function(req,res){
 })
 
 // 가구 리스트 전체 불러오기
-router.get('/category/furniture', async function(req,res){
+router.get('/category/:id', async function(req,res){
+    const id = req.params.id;
+    const result = await category.callFurnitureList(id);
 
-    const result = await category.callFurnitureList();
+    for(var i in result){
+         const countOption = await category.callSubObject(result[i].f_Idx);
+       
 
-
-    if(result.length ==0 ){
-        res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST,responseMessage.CATEGORY_FAIL));
+           result[i].option = countOption;
         
+
     }
+
+
+
+    // if(result.length ==0 ){
+    //     res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST,responseMessage.CATEGORY_FAIL));
+        
+    // }
 
     res.status(statusCode.OK).send(util.success(statusCode.OK,responseMessage.CATEGORY_SUCCESS,{ result  }));
       
@@ -67,8 +77,13 @@ router.get('/category/furniture', async function(req,res){
 //하위가구 보여주기
 router.get('/category/subobject', async function(req,res){
 
-    const result = await category.callSubObject();
+    //const result = await category.callSubObject();
 
+    // for(const i = 0; i< result.length; i++){
+
+    //     result[i].topdata.pu
+
+    // }
 
     if(result.length ==0 ){
         res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST,responseMessage.CATEGORY_FAIL));
