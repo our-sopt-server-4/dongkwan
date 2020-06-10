@@ -14,5 +14,9 @@
     "morgan": "~1.9.1",
     "pbkdf2": "^3.0.17",
     "promise-mysql": "^4.1.3"
-  }
+  },
+  "main": "app.js",
+  "author": "",
+  "license": "ISC",
+  "description": ""
 }
